@@ -1,0 +1,12 @@
+{:paths  ["src/main"]
+ :test   {:extra-paths ["test" "src/test/clojure"]
+          :extra-deps  {org.clojure/test.check {:mvn/version "RELEASE"}}}
+ :runner {:extra-deps {com.cognitect/test-runner
+                       {:git/url "https://github.com/cognitect-labs/test-runner"
+                        :sha     "b6b3193fcc42659d7e46ecd1884a228993441182"}}
+          :main-opts  ["-m" "cognitect.test-runner"
+                       "-d" "test"
+                       "-d" "src/test/clojure"]}
+ :deps   {clj-http/clj-http     {:mvn/version "3.11.0"}
+          org.clojure/data.json {:mvn/version "1.0.0"}}
+ }
