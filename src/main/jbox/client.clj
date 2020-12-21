@@ -68,37 +68,32 @@
   []
   (invoke http-client/get (str "_meta" "/" (:box-id *config*))))
 
-(init {:box-id "box_4eb742d8eb29e6c8d1c6"})
-
-*ns*
-;
-;(get-config {:box-id "box_4eb742d8eb29e6c8d1c6"})
+;(init {:box-id "box_4eb742d8eb29e6c8d1c6"})
 ;
 ;
-
-(vector {:username "uname" :email "mail@a.com"})
-(create "users" {:username "uname" :email "mail@a.com"})
-(create  {:username "uname" :email "mail@a.com"})
-(create "users" [{:username "uname" :email "mail@a.com"} {:username "uname1" :email "mail@a.com"}])
-(list)
-(box-meta)
-
-
-(http-client/post
-  "https://jsonbox.io/box_4eb742d8eb29e6c8d1c6/users"
-  {; :debug true
-   ;:debug-body true
-   :response-interceptor (fn [resp ctx] (println resp ctx))
-   :debug                true
-   :body                 (json/json-str [{:username "uname" :email "mail@a.com"}])
-   :content-type         :json
-   })
+;;
+;;(get-config {:box-id "box_4eb742d8eb29e6c8d1c6"})
+;;
+;;
+;
+;(vector {:username "uname" :email "mail@a.com"})
+;(create "users" {:username "uname" :email "mail@a.com"})
+;(create  {:username "uname" :email "mail@a.com"})
+;(create "users" [{:username "uname" :email "mail@a.com"} {:username "uname1" :email "mail@a.com"}])
+;(list)
+;(box-meta)
+;
+;
+;(http-client/post
+;  "https://jsonbox.io/box_4eb742d8eb29e6c8d1c6/users"
+;  {; :debug true
+;   ;:debug-body true
+;   :response-interceptor (fn [resp ctx] (println resp ctx))
+;   :debug                true
+;   :body                 (json/json-str [{:username "uname" :email "mail@a.com"}])
+;   :content-type         :json
+;   })
 
 ;
 ;(:base-url *config*)
 ;
-*config*
-;
-;(alter-var-root #'*config* {:one 1})
-;
-*ns*
