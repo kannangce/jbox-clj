@@ -5,17 +5,19 @@ Clojure client for http://jsonbox.io/[json-box]
 # Usage:
 
 
- ### Create an object
+### Create an object
+ 
 ```
 (create {:username "uname1" :email "mail@a.com"})
 ```
  
- ### Create an object under a collection
+### Create an object under a collection
+
 ```
 (create "users1" {:username "uname1" :email "mail@a.com"})
 ```
 
-### fetch all
+### Fetch all
 ```
 (fetch)
 ```
