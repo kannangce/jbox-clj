@@ -4,33 +4,56 @@ Clojure client for http://jsonbox.io/[json-box]
 
 # Usage:
 
+
+ ### Create an object
 ```
-;Initialize box with optional token
-(init {:box-id "box_61b66527584541e93e8c" :token "123"})
-
- ;Create an object
 (create {:username "uname1" :email "mail@a.com"})
- ;Create an object under a collection
+```
+ 
+ ### Create an object under a collection
+```
 (create "users1" {:username "uname1" :email "mail@a.com"})
+```
 
-;fetch all
+### fetch all
+```
 (fetch)
-;Fetch based on a search criteria
+```
+
+### Fetch based on a search criteria
+```
 (fetch  {:q "username:uname1"})
-;Fetch specific object
+```
+
+### Fetch specific object
+```
 (fetch "5fecb8624f855400173e4f91")
-; Fetch all under a given collection
+```
+
+### Fetch all under a given collection
+```
 (fetch  "users1")
+```
 
-;; Updates the object with the given id
+
+### Updates the object with the given id
+```
 (edit "5fecb8624f855400173e4f91" {:username "uname1" :email "mail1@a.com"})
+```
 
 
-; Delete a specific object
+### Delete a specific object
+```
 (delete "5fecb6894f855400173e4f76")
-; Delete all that matches the given criteria
-(delete {:q "username:uname1"})
+```
 
-;; Gets box meta
+### Delete all that matches the given criteria
+```
+(delete {:q "username:uname1"})
+```
+
+
+### Gets box meta
+```
 (box-meta)
 ```
