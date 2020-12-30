@@ -4,96 +4,87 @@
 
 
 (def ^:private default-base-url "https://jsonbox.io/")
-(def ^:private *config* {:base-url default-base-url})
+(def ^:private config {:base-url default-base-url})
 (def ^:private default-options
-  {:headers              {:accept :json}
-   :content-type         :json
-   :response-interceptor (fn [resp ctx] (println resp ctx))})
+  {:headers      {:accept :json}
+   :debug        true
+   :response-interceptor (fn [resp ctx] (println resp ctx))
+   :content-type :json})
 
+(defn classify-ip
+  [ip &_]
+  (cond (map? ip) :map (string? ip) :str))
 
 (defn init
   "Initializes the client"
   [cfg]
-  (alter-var-root #'*config* merge cfg))
+  (alter-var-root #'config merge cfg))
 
 (defn invoke
   ([http-fn end-point options]
    (do
-     (let [url (str (:base-url *config*) end-point)
-           final-options (merge options default-options)]
+     (let [url (str (:base-url config) end-point)
+           value (:token config)
+           auth-headers (if (nil? value) {} {:x-api-key value})
+           final-options (merge options
+                                (update-in default-options
+                                           [:headers] merge auth-headers))]
        (do
-         (println url)
-         (http-fn url final-options)))))
+         (-> (http-fn url final-options)
+               :body
+               json/read-json)))))
   ([http-fn end-point]
-   (-> (invoke http-fn end-point nil)
-       :body
-       json/read-json)))
+   (invoke http-fn end-point nil)))
 
+;; Create
 (defn create
-  ([obj-type obj-to-create]
+  ([collection obj-to-create]
+   "Create object under specific collection"
    (invoke http-client/post
-           (str (:box-id *config*) "/" obj-type)
+           (str (:box-id config) "/" collection)
            {:body (json/json-str obj-to-create)}))
   ([obj-to-create]
+   "Creates the given object"
    (create nil obj-to-create)))
 
+
+;; Fetch
+(defmulti fetch-with-criteria classify-ip)
+
+(defmethod fetch-with-criteria :str [obj-id]
+  (invoke http-client/get (str (:box-id config) "/" obj-id)))
+
+(defmethod fetch-with-criteria :map [criteria]
+  (invoke http-client/get (str (:box-id config)) {:query-params criteria}))
+
+
 (defn fetch
-  [obj-id]
-  (invoke http-client/get
-          (str (:box-id *config*) "/" obj-id)))
-
-(defn list
   ([]
-   (invoke http-client/get (:box-id *config*)))
-  ([obj-type]
-   (invoke http-client/get
-           (str (:box-id *config*) "/" obj-type)))
-  ([obj-type params]
-   (invoke http-client/get
-           (str (:box-id *config*) "/" obj-type)) {:query-params params}))
+   "Fetch all"
+   (invoke http-client/get (:box-id config)))
+  ([fetch-criteria]
+   "Fetch specific object(s). fetch-criteria can be and id or search criteria"
+   (fetch-with-criteria fetch-criteria)))
 
-(defn update
+;; Update
+(defn edit
   [obj-id obj-to-update]
-  (invoke http-client/put (str (:box-id *config*) "/" obj-id) {:body obj-to-update}))
+  "Update the object with given id"
+  (invoke http-client/put (str (:box-id config) "/" obj-id) {:body (json/json-str obj-to-update)}))
 
-(defn delete
-  ([^String obj-id]
-   (invoke http-client/delete (str (:box-id *config*) "/" obj-id))))
 
-(defn delete-multiple
-  ([criteria]
-   (invoke http-client/delete (str (:box-id *config*) {:query-params criteria}))))
+;; Delete
+(defmulti delete classify-ip)
+
+(defmethod delete :str [obj-id]
+  "Delete object with given id"
+  (invoke http-client/delete (str (:box-id config) "/" obj-id)))
+
+(defmethod delete :map [criteria]
+  "Delete all objects matching the given criteria"
+  (invoke http-client/delete (str (:box-id config)) {:query-params criteria}))
 
 (defn box-meta
+  "Gets meta data of the box"
   []
-  (invoke http-client/get (str "_meta" "/" (:box-id *config*))))
-
-;(init {:box-id "box_4eb742d8eb29e6c8d1c6"})
-;
-;
-;;
-;;(get-config {:box-id "box_4eb742d8eb29e6c8d1c6"})
-;;
-;;
-;
-;(vector {:username "uname" :email "mail@a.com"})
-;(create "users" {:username "uname" :email "mail@a.com"})
-;(create  {:username "uname" :email "mail@a.com"})
-;(create "users" [{:username "uname" :email "mail@a.com"} {:username "uname1" :email "mail@a.com"}])
-;(list)
-;(box-meta)
-;
-;
-;(http-client/post
-;  "https://jsonbox.io/box_4eb742d8eb29e6c8d1c6/users"
-;  {; :debug true
-;   ;:debug-body true
-;   :response-interceptor (fn [resp ctx] (println resp ctx))
-;   :debug                true
-;   :body                 (json/json-str [{:username "uname" :email "mail@a.com"}])
-;   :content-type         :json
-;   })
-
-;
-;(:base-url *config*)
-;
+  (invoke http-client/get (str "_meta" "/" (:box-id config))))
