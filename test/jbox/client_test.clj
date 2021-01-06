@@ -1,4 +1,4 @@
-(ns jbox.client
+(ns jbox.client-test
     (:require [clojure.test :refer :all])
     (:require [jbox.client :as j]))
 

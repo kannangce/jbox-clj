@@ -1,6 +1,6 @@
 (ns jbox.client
-  (:require [clj-http.client :as http-client])
-  (:require [clojure.data.json :as json]))
+    (:require [clj-http.client :as http-client])
+    (:require [clojure.data.json :as json]))
 
 
 (def ^:private default-base-url "https://jsonbox.io/")
